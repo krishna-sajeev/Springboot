@@ -13,7 +13,7 @@ public class EmployeeModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long empId;
 
-    @JsonProperty("EmpName")
+    @JsonProperty("EmployeeName")
     private String name;
 
     @JsonProperty("Department")
