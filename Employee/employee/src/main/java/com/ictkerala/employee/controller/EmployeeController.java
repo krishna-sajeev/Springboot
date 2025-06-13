@@ -22,7 +22,7 @@ public class EmployeeController {
     private EmployeeRepo repo;
 
 
-    @PostMapping("/viewEmployeeDetails")
+    @GetMapping("/viewEmployeeDetails")
     public ResponseEntity<List<EmployeeModel>> viewAll() {
         Map<String, String> response = new HashMap<>();
         List<EmployeeModel> employee = List.of();
@@ -37,7 +37,7 @@ public class EmployeeController {
         return ResponseEntity.ok(employee);
     }
 
-    @PostMapping("/viewEmployeeDetails/{id}")
+    @GetMapping("/viewEmployeeDetails/{id}")
     public ResponseEntity<Optional<EmployeeModel>> viewById(@PathVariable int id) {
         Map<String, String> response = new HashMap<>();
         Optional<EmployeeModel> employee = Optional.empty();
