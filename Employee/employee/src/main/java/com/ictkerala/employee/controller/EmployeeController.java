@@ -22,7 +22,7 @@ public class EmployeeController {
     private EmployeeRepo repo;
 
 
-    @GetMapping("/viewEmployeeDetails")
+    @PostMapping("/viewEmployeeDetails")
     public ResponseEntity<List<EmployeeModel>> viewAll() {
         Map<String, String> response = new HashMap<>();
         List<EmployeeModel> employee = List.of();
@@ -37,7 +37,7 @@ public class EmployeeController {
         return ResponseEntity.ok(employee);
     }
 
-    @GetMapping("/viewEmployeeDetails/{id}")
+    @PostMapping("/viewEmployeeDetails/{id}")
     public ResponseEntity<Optional<EmployeeModel>> viewById(@PathVariable int id) {
         Map<String, String> response = new HashMap<>();
         Optional<EmployeeModel> employee = Optional.empty();
@@ -71,27 +71,27 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}")
-    public  ResponseEntity<Map<String,String>> updateEmployee(@PathVariable Long id ,@RequestBody EmployeeModel input){
-        Map<String,String> response = new HashMap<>();
-        Optional<EmployeeModel> employeeModel;
-        try{
-            employeeModel=repo.findById(Math.toIntExact(id));
-            if (employeeModel.isPresent()){
-                EmployeeModel existingemployee = employeeModel.get();
-                existingemployee.setName(input.getName());
-                existingemployee.setDepartment(input.getDepartment());
-                existingemployee.setSalary(input.getSalary());
-                existingemployee.setEmpId(input.getEmpId());
-                repo.save(existingemployee);
-                System.out.println(existingemployee.getEmpId());
-                response.put("status","Employee detail updated");
+    public ResponseEntity<?> updateEmployee(@PathVariable Long id, @RequestBody EmployeeModel updatedEmployee) {
+        try {
+            Optional<EmployeeModel> optionalEmployee = repo.findById(Math.toIntExact(id));
+
+            if (!optionalEmployee.isPresent()) {
+                return ResponseEntity.notFound().build();
             }
 
+            EmployeeModel existingEmployee = optionalEmployee.get();
+            existingEmployee.setName(updatedEmployee.getName());
+            existingEmployee.setDepartment(updatedEmployee.getDepartment());
+            existingEmployee.setSalary(updatedEmployee.getSalary());
+
+            EmployeeModel savedEmployee = repo.save(existingEmployee);
+            return ResponseEntity.ok(savedEmployee);
+
         } catch (Exception e) {
-            response.put("status","Error occured . Not found");
+            return ResponseEntity.status(500).body("Error updating employee: " + e.getMessage());
         }
-        return ResponseEntity.ok(response);
     }
+
 
     @DeleteMapping("/removeEmployee/{id}")
     public ResponseEntity<Map<String,String>> deleteEmployeeDetails(@PathVariable int id){
